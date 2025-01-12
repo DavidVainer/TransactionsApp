@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionsApp.API", "TransactionsApp.API\TransactionsApp.API.csproj", "{511D1FCA-4EDB-42AF-B6C7-D631F6ED3719}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{B36BCD39-08B2-4E72-9BA3-138DDE932DE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{88A10C3C-BCDE-4605-A514-DA5710CF013D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{2CDA4D71-9C16-4443-B74D-04F684A792CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{63E60B7D-C280-4FE7-A3D7-99F6F3E91816}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionsApp.Domain.Models", "TransactionsApp.Domain.Models\TransactionsApp.Domain.Models.csproj", "{339B60DA-6F6B-4C61-8E0A-1C7A85ABA4FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{511D1FCA-4EDB-42AF-B6C7-D631F6ED3719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{511D1FCA-4EDB-42AF-B6C7-D631F6ED3719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{511D1FCA-4EDB-42AF-B6C7-D631F6ED3719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{511D1FCA-4EDB-42AF-B6C7-D631F6ED3719}.Release|Any CPU.Build.0 = Release|Any CPU
+		{339B60DA-6F6B-4C61-8E0A-1C7A85ABA4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{339B60DA-6F6B-4C61-8E0A-1C7A85ABA4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{339B60DA-6F6B-4C61-8E0A-1C7A85ABA4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{339B60DA-6F6B-4C61-8E0A-1C7A85ABA4FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{339B60DA-6F6B-4C61-8E0A-1C7A85ABA4FB} = {B36BCD39-08B2-4E72-9BA3-138DDE932DE0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {781CBA64-B6FC-44A7-BC49-F42A0848E671}
+	EndGlobalSection
+EndGlobal
