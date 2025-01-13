@@ -5,9 +5,9 @@
     /// </summary>
     public enum TransactionStatus
     {
-        Pending,
-        Completed,
-        Failed,
-        Canceled
+        Pending = 0,
+        Completed = 1,
+        Failed = 2,
+        Canceled = 3,
     }
 }

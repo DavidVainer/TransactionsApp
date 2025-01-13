@@ -27,7 +27,9 @@ namespace TransactionsApp.API.IoC
             services.AddDbContext<TransactionsAppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            services.AddScoped<IRepository<Transaction>, BaseRepository<Transaction>>();
+            services.AddScoped<ITransactionManager, TransactionManager>();
+
+            services.AddScoped<IRepository<Transaction>, TransactionRepository>();
 
             services.AddScoped<IRepository<User>, BaseRepository<User>>();
         }

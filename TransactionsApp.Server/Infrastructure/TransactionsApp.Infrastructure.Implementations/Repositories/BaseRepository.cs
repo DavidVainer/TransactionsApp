@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using TransactionsApp.Application.Services.Repositories;
+using TransactionsApp.Domain.Models.Entities;
 
 namespace TransactionsApp.Infrastructure.Implementations.Repositories
 {
@@ -10,7 +11,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Repositories
     /// <typeparam name="T">The type of repository entity.</typeparam>
     public class BaseRepository<T> : IRepository<T> where T : class
     {
-        private readonly TransactionsAppDbContext _context;
+        protected readonly TransactionsAppDbContext _context;
 
         public BaseRepository(TransactionsAppDbContext context)
         {
@@ -21,7 +22,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Repositories
         /// Gets all records from a data source.
         /// </summary>
         /// <returns>Collection of all records.</returns>
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             var records = await _context.Set<T>().ToListAsync();
             return records;

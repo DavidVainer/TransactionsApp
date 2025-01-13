@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using TransactionsApp.Application.Models.Dto;
+using TransactionsApp.Application.Services.Managers;
 
 namespace TransactionsApp.API.Controllers
 {
@@ -6,14 +8,16 @@ namespace TransactionsApp.API.Controllers
     /// Handles transactions related requests.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class TransactionsController : ControllerBase
     {
         private readonly ILogger<TransactionsController> _logger;
+        private readonly ITransactionManager _manager;
 
-        public TransactionsController(ILogger<TransactionsController> logger)
+        public TransactionsController(ILogger<TransactionsController> logger, ITransactionManager manager)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         }
 
         /// <summary>
@@ -21,9 +25,10 @@ namespace TransactionsApp.API.Controllers
         /// </summary>
         /// <returns>A collection of all transactions.</returns>
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            throw new NotImplementedException();
+            var transactions = await _manager.GetAllTransactionsAsync();
+            return Ok(transactions);
         }
 
         /// <summary>
@@ -33,9 +38,10 @@ namespace TransactionsApp.API.Controllers
         /// <returns>The fetched transaction.</returns>
 
         [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var transaction = await _manager.GetTransactionByIdAsync(id);
+            return Ok(transaction);
         }
 
         /// <summary>
@@ -43,20 +49,21 @@ namespace TransactionsApp.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Create()
+        public async Task<IActionResult> Create([FromBody]AddTransactionDto dto)
         {
-            throw new NotImplementedException();
+            await _manager.CreateTransactionAsync(dto);
+            return Ok();
         }
 
         /// <summary>
         /// Updates a transaction by its unique identifier.
         /// </summary>
-        /// <param name="id">The transaction unique identifier.</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id)
+        public async Task<IActionResult> Update([FromBody]UpdateTransactionDto dto)
         {
-            throw new NotImplementedException();
+            await _manager.UpdateTransactionAsync(dto);
+            return Ok();
         }
 
         /// <summary>
@@ -65,9 +72,10 @@ namespace TransactionsApp.API.Controllers
         /// <param name="id">The transaction unique identifier.</param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            await _manager.DeleteTransactionAsync(id);
+            return Ok();
         }
     }
 }
