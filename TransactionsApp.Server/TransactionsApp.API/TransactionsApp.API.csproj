@@ -7,7 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\TransactionsApp.Application.Models\TransactionsApp.Application.Models.csproj" />
+    <ProjectReference Include="..\Application\TransactionsApp.Application.Services.Implementations\TransactionsApp.Application.Services.Implementations.csproj" />
+    <ProjectReference Include="..\Application\TransactionsApp.Application.Services\TransactionsApp.Application.Services.csproj" />
+    <ProjectReference Include="..\Domain\TransactionsApp.Domain.Models\TransactionsApp.Domain.Models.csproj" />
+    <ProjectReference Include="..\Domain\TransactionsApp.Domain.Services.Implementations\TransactionsApp.Domain.Services.Implementations.csproj" />
+    <ProjectReference Include="..\Domain\TransactionsApp.Domain.Services\TransactionsApp.Domain.Services.csproj" />
+    <ProjectReference Include="..\Infrastructure\TransactionsApp.Infrastructure.Implementations\TransactionsApp.Infrastructure.Implementations.csproj" />
+    <ProjectReference Include="..\Infrastructure\TransactionsApp.Infrastructure.Models\TransactionsApp.Infrastructure.Models.csproj" />
+    <ProjectReference Include="..\Infrastructure\TransactionsApp.Infrastructure.Services\TransactionsApp.Infrastructure.Services.csproj" />
   </ItemGroup>
 
 </Project>
