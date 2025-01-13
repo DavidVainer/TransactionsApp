@@ -1,6 +1,9 @@
-﻿using TransactionsApp.Application.Models.Dto;
+﻿using TransactionsApp.Application.Models.BankingProvider.Requests;
+using TransactionsApp.Application.Models.BankingProvider.Responses;
+using TransactionsApp.Application.Models.Dto;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
+using TransactionsApp.Application.Services.Services;
 using TransactionsApp.Domain.Models.Entities;
 using TransactionsApp.Domain.Models.Enums;
 
@@ -13,13 +16,16 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
     {
         private readonly IRepository<Transaction> _transactionRepository;
         private readonly IRepository<User> _userRepository;
+        private readonly IBankingProviderService _bankingProviderService;
 
         public TransactionManager(
             IRepository<Transaction> transactionRepository,
-            IRepository<User> userRepository)
+            IRepository<User> userRepository,
+            IBankingProviderService bankingProviderService)
         {
             _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _bankingProviderService = bankingProviderService ?? throw new ArgumentNullException(nameof(bankingProviderService));
         }
 
         /// <summary>
@@ -46,18 +52,41 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         /// <summary>
         /// Creates a new transaction.
         /// </summary>
-        /// <param name="transaction">Transaction to create.</param>
-        public async Task CreateTransactionAsync(AddTransactionDto transaction)
+        /// <param name="dto">Data transfer object with data of a transaction to create.</param>
+        public async Task CreateTransactionAsync(AddTransactionDto dto)
         {
-            var userId = await GetUserId(transaction);
+            var tokenResponse = await _bankingProviderService.GenerateTokenAsync(dto);
+
+            if (tokenResponse.Code != "Success")
+            {
+                throw new Exception("Failed to generate token.");
+            }
+
+            TransactionResponseModel responseModel;
+
+            if (dto.TransactionType == TransactionType.Deposit)
+            {
+                responseModel = await _bankingProviderService.DepositAsync(dto);
+            }
+            else
+            {
+                responseModel = await _bankingProviderService.WithdrawAsync(dto);
+            }
+
+            if (responseModel.Code != "Success")
+            {
+                throw new Exception("Failed to process transaction.");
+            }
+
+            var userId = await GetUserId(dto);
 
             var newTransaction = new Transaction
             {
                 UserId = userId,
-                TransactionType = transaction.TransactionType,
-                Amount = transaction.Amount,
+                TransactionType = dto.TransactionType,
+                Amount = dto.Amount,
                 Date = DateTime.UtcNow,
-                AccountNumber = transaction.AccountNumber,
+                AccountNumber = dto.AccountNumber,
                 Status = TransactionStatus.Pending,
             };
 
@@ -67,18 +96,18 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         /// <summary>
         /// Updates an existing transaction.
         /// </summary>
-        /// <param name="transaction">Transaction to update.</param>
-        public async Task UpdateTransactionAsync(UpdateTransactionDto transaction)
+        /// <param name="dto">Data transfer object with data of a transaction to create.</param>
+        public async Task UpdateTransactionAsync(UpdateTransactionDto dto)
         {
-            var existingTransaction = await _transactionRepository.GetByIdAsync(transaction.TransactionId);
+            var existingTransaction = await _transactionRepository.GetByIdAsync(dto.TransactionId);
 
             if (existingTransaction == null)
             {
                 throw new Exception("Transaction not found.");
             }
 
-            existingTransaction.Amount = transaction.Amount;
-            existingTransaction.AccountNumber = transaction.AccountNumber;
+            existingTransaction.Amount = dto.Amount;
+            existingTransaction.AccountNumber = dto.AccountNumber;
 
             await _transactionRepository.UpdateAsync(existingTransaction);
         }

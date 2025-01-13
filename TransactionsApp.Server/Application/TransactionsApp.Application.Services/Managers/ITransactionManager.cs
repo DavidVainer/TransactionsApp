@@ -24,14 +24,14 @@ namespace TransactionsApp.Application.Services.Managers
         /// <summary>
         /// Creates a new transaction.
         /// </summary>
-        /// <param name="transaction">Transaction to create.</param>
-        Task CreateTransactionAsync(AddTransactionDto transaction);
+        /// <param name="dto">Data transfer object with data of a transaction to create.</param>
+        Task CreateTransactionAsync(AddTransactionDto dto);
 
         /// <summary>
         /// Updates an existing transaction.
         /// </summary>
-        /// <param name="transaction">Transaction to update.</param>
-        Task UpdateTransactionAsync(UpdateTransactionDto transaction);
+        /// <param name="dto">Data transfer object with data of a transaction to create.</param>
+        Task UpdateTransactionAsync(UpdateTransactionDto dto);
 
         /// <summary>
         /// Deletes a transaction by its id.
