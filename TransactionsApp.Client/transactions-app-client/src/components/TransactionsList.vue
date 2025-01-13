@@ -7,7 +7,7 @@
           <b-button size="sm" variant="secondary" @click="editTransaction(row.item)" title="Edit">
             <BIconPencilFill />
           </b-button>
-          <b-button size="sm" variant="danger" @click="deleteTransaction(row.item.id)" title="Delete">
+          <b-button size="sm" variant="danger" @click="removeTransaction(row.item.id)" title="Delete">
             <BIconTrashFill />
           </b-button>
         </div>
@@ -54,7 +54,7 @@ export default {
       this.setTransactionToEdit(transaction);
       this.$router.push("/new");
     },
-    deleteTransaction(transactionId) {
+    removeTransaction(transactionId) {
       if (confirm("Are you sure you want to delete this transaction?")) {
         this.deleteTransaction(transactionId);
       }

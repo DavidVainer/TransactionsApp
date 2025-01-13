@@ -2,9 +2,12 @@
 using TransactionsApp.Application.Services.Implementations.Managers;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
+using TransactionsApp.Application.Services.Services;
 using TransactionsApp.Domain.Models.Entities;
 using TransactionsApp.Infrastructure.Implementations;
 using TransactionsApp.Infrastructure.Implementations.Repositories;
+using TransactionsApp.Infrastructure.Implementations.Services;
+using TransactionsApp.Infrastructure.Models.BankingProviderSettings;
 
 namespace TransactionsApp.API.IoC
 {
@@ -24,10 +27,22 @@ namespace TransactionsApp.API.IoC
         {
             var connectionString = configuration.GetConnectionString(DEFAULT_CONNECTION_STRING_KEY);
 
+            services.AddHttpClient("OpenBankingClient");
+
             services.AddDbContext<TransactionsAppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
             services.AddScoped<ITransactionManager, TransactionManager>();
+
+            services.AddScoped<IBankingProviderService, OpenBankingProviderService>();
+
+            services.AddSingleton<IBankingProviderSettings>(new BankingProviderSettings
+            {
+                CreateTokenUrl = "https://openBanking/createtoken",
+                CreateTokenSecretId = "Je45GDf34",
+                DepositUrl = "https://openBanking/createdeposit",
+                WithdrawUrl = "https://openBanking/createWithdrawal",
+            });
 
             services.AddScoped<IRepository<Transaction>, TransactionRepository>();
 
