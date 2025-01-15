@@ -13,20 +13,20 @@ namespace TransactionsApp.Application.Services.Services
         /// </summary>
         /// <param name="request">Request model.</param>
         /// <returns>Response model with generated token and request status.</returns>
-        Task<TokenResponseModel> GenerateTokenAsync(AddTransactionDto dto);
+        Task<BankingResponseModel> GenerateTokenAsync(AddTransactionDto dto);
 
         /// <summary>
         /// Executes a deposit transaction in the banking provider.
         /// </summary>
         /// <param name="request">Request model.</param>
         /// <returns>Response model with request and action statuses.</returns>
-        Task<TransactionResponseModel> DepositAsync(AddTransactionDto dto);
+        Task<BankingResponseModel> DepositAsync(AddTransactionDto dto);
 
         /// <summary>
         /// Executes a withdrawl transaction in the banking provider.
         /// </summary>
         /// <param name="request">Request model.</param>
         /// <returns>Response model with request and action statuses.</returns>
-        Task<TransactionResponseModel> WithdrawAsync(AddTransactionDto dto);
+        Task<BankingResponseModel> WithdrawAsync(AddTransactionDto dto);
     }
 }

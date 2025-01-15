@@ -5,6 +5,9 @@
     /// </summary>
     public class UpdateTransactionDto
     {
+        /// <summary>
+        /// Transaction unique identifier.
+        /// </summary>
         public Guid TransactionId { get; set; }
 
         /// <summary>

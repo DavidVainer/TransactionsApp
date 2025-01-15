@@ -6,7 +6,7 @@
     public class TokenRequestModel
     {
         /// <summary>
-        /// User's unique identifer (e.g., national ID);
+        /// User's unique identity (e.g., Teudat Zehut, National ID).
         /// </summary>
         public string UserId { get; set; }
 

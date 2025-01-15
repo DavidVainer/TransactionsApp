@@ -22,7 +22,7 @@ namespace TransactionsApp.Infrastructure.Implementations
             {
                 entity.HasKey(u => u.Id);
 
-                entity.Property(u => u.UserId)
+                entity.Property(u => u.UserIdentity)
                     .IsRequired()
                     .HasMaxLength(9)
                     .IsUnicode(false);

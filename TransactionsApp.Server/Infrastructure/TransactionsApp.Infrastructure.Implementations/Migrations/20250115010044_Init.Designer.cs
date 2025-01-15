@@ -12,7 +12,7 @@ using TransactionsApp.Infrastructure.Implementations;
 namespace TransactionsApp.Infrastructure.Implementations.Migrations
 {
     [DbContext(typeof(TransactionsAppDbContext))]
-    [Migration("20250113123533_Init")]
+    [Migration("20250115010044_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -79,7 +79,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserIdentity")
                         .IsRequired()
                         .HasMaxLength(9)
                         .IsUnicode(false)

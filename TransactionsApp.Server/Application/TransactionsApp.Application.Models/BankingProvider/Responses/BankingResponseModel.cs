@@ -1,9 +1,9 @@
 ﻿namespace TransactionsApp.Application.Models.BankingProvider.Responses
 {
     /// <summary>
-    /// Represents the model for the token retrieval response.
+    /// Represents the model for a banking provider request response.
     /// </summary>
-    public class TokenResponseModel
+    public class BankingResponseModel
     {
         /// <summary>
         /// Request's success or failure code.
@@ -11,7 +11,7 @@
         public string Code { get; set; }
 
         /// <summary>
-        /// Generated token.
+        /// Data returned by the banking provider.
         /// </summary>
         public string Data { get; set; }
     }

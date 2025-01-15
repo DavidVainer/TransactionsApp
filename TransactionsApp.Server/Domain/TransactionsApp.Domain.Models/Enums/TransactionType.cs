@@ -5,7 +5,7 @@
     /// </summary>
     public enum TransactionType
     {
-        Deposit = 0,
-        Withdrawal = 1,
+        Deposit = 1,
+        Withdrawal = 2,
     }
 }
