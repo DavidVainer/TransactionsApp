@@ -25,12 +25,15 @@ namespace TransactionsApp.Application.Services.Implementations.Factories
         /// <returns>An instance of <see cref="ITransactionStrategy"/> of the specified transaction type.</returns>
         public ITransactionStrategy GetStrategy(TransactionType transactionType)
         {
-            return transactionType switch
+            switch (transactionType)
             {
-                TransactionType.Deposit => _serviceProvider.GetRequiredService<DepositStrategy>(),
-                TransactionType.Withdrawal => _serviceProvider.GetRequiredService<WithdrawStrategy>(),
-                _ => throw new ArgumentException("Invalid transaction type."),
-            };
+                case TransactionType.Deposit:
+                    return _serviceProvider.GetRequiredService<DepositStrategy>();
+                case TransactionType.Withdrawal:
+                    return _serviceProvider.GetRequiredService<WithdrawStrategy>();
+                default:
+                    throw new ArgumentException("Invalid transaction type.");
+            }
         }
     }
 

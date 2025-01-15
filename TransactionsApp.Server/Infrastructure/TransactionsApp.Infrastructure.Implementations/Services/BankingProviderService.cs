@@ -14,6 +14,8 @@ namespace TransactionsApp.Infrastructure.Implementations.Services
     /// </summary>
     public class BankingProviderService : IBankingProviderService
     {
+        private const string BANKING_RESPONSE_SUCCESS_CODE = "Success";
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IBankingProviderSettings _settings;
 
@@ -107,7 +109,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Services
 
             var responseModel = new BankingResponseModel
             {
-                Code = "Success",
+                Code = BANKING_RESPONSE_SUCCESS_CODE,
                 Data = "Dummy data"
             };
 

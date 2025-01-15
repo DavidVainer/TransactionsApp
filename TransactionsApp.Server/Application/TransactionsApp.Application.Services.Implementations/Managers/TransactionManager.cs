@@ -3,6 +3,7 @@ using TransactionsApp.Application.Services.Factories;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
 using TransactionsApp.Application.Services.Services;
+using TransactionsApp.Common.Services;
 using TransactionsApp.Domain.Models.Entities;
 using TransactionsApp.Domain.Models.Enums;
 
@@ -13,21 +14,29 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
     /// </summary>
     public class TransactionManager : ITransactionManager
     {
+        private const string BANKING_RESPONSE_SUCCESS_CODE = "Success";
+
         private readonly IRepository<Transaction> _transactionRepository;
         private readonly IUserManager _userManager;
         private readonly IBankingProviderService _bankingProviderService;
         private readonly ITransactionStrategyFactory _transactionStrategyFactory;
+        private readonly IMapper<AddTransactionDto, Transaction> _transactionMapper;
+        private readonly IMapper<AddTransactionDto, AddUserDto> _addUserDtoMapper;
 
         public TransactionManager(
             IRepository<Transaction> transactionRepository,
             IUserManager userManager,
             IBankingProviderService bankingProviderService,
-            ITransactionStrategyFactory transactionStrategyFactory)
+            ITransactionStrategyFactory transactionStrategyFactory,
+            IMapper<AddTransactionDto, Transaction> transactionMapper,
+            IMapper<AddTransactionDto, AddUserDto> addUserDtoMapper)
         {
             _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _bankingProviderService = bankingProviderService ?? throw new ArgumentNullException(nameof(bankingProviderService));
             _transactionStrategyFactory = transactionStrategyFactory ?? throw new ArgumentNullException(nameof(transactionStrategyFactory));
+            _transactionMapper = transactionMapper ?? throw new ArgumentNullException(nameof(transactionMapper));
+            _addUserDtoMapper = addUserDtoMapper ?? throw new ArgumentNullException(nameof(addUserDtoMapper));
         }
 
         /// <summary>
@@ -58,7 +67,10 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         public async Task ProcessTransactionAsync(AddTransactionDto dto)
         {
             var userId = await GetUserId(dto);
-            var transaction = await InitializeTransactionAsync(dto, userId);
+
+            dto.UserId = userId;
+
+            var transaction = await InitializeTransactionAsync(dto);
 
             try
             {
@@ -111,19 +123,9 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         /// <param name="dto">Data transfer object.</param>
         /// <param name="userId">User unique identifier.</param>
         /// <returns>Created transaction.</returns>
-        private async Task<Transaction> InitializeTransactionAsync(AddTransactionDto dto, Guid userId)
+        private async Task<Transaction> InitializeTransactionAsync(AddTransactionDto dto)
         {
-            var transaction = new Transaction
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                TransactionType = dto.TransactionType,
-                Amount = dto.Amount,
-                Date = DateTime.Now,
-                AccountNumber = dto.AccountNumber,
-                Status = TransactionStatus.Pending,
-                Deleted = false,
-            };
+            var transaction = _transactionMapper.Map(dto);
 
             return await _transactionRepository.AddAsync(transaction);
         }
@@ -136,7 +138,7 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         {
             var tokenResponse = await _bankingProviderService.GenerateTokenAsync(dto);
 
-            if (tokenResponse.Code != "Success")
+            if (tokenResponse.Code != BANKING_RESPONSE_SUCCESS_CODE)
             {
                 throw new Exception("Failed to generate token.");
             }
@@ -151,7 +153,7 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
             var transactionStrategy = _transactionStrategyFactory.GetStrategy(dto.TransactionType);
             var responseModel = await transactionStrategy.ProcessTransactionAsync(dto);
 
-            if (responseModel.Code != "Success")
+            if (responseModel.Code != BANKING_RESPONSE_SUCCESS_CODE)
             {
                 throw new Exception("Failed to process transaction.");
             }
@@ -168,13 +170,8 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
 
             if (existingUser == null)
             {
-                var newUser = await _userManager.CreateUserAsync(new AddUserDto
-                {
-                    FullNameHebrew = dto.FullNameHebrew,
-                    FullNameEnglish = dto.FullNameEnglish,
-                    DateOfBirth = dto.DateOfBirth,
-                    UserIdentity = dto.UserIdentity
-                });
+                var addUserDto = _addUserDtoMapper.Map(dto);
+                var newUser = await _userManager.CreateUserAsync(addUserDto);
 
                 return newUser.Id;
             }

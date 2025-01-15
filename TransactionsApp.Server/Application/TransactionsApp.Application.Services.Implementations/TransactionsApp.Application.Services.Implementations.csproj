@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\TransactionsApp.Common.Services\TransactionsApp.Common.Services.csproj" />
     <ProjectReference Include="..\..\Domain\TransactionsApp.Domain.Models\TransactionsApp.Domain.Models.csproj" />
-    <ProjectReference Include="..\..\Domain\TransactionsApp.Domain.Services\TransactionsApp.Domain.Services.csproj" />
     <ProjectReference Include="..\TransactionsApp.Application.Models\TransactionsApp.Application.Models.csproj" />
     <ProjectReference Include="..\TransactionsApp.Application.Services\TransactionsApp.Application.Services.csproj" />
   </ItemGroup>

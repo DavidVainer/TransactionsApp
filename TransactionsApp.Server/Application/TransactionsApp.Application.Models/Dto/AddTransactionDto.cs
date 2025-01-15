@@ -28,6 +28,11 @@ namespace TransactionsApp.Application.Models.Dto
         public string UserIdentity { get; set; }
 
         /// <summary>
+        /// Unique data source identifier of the user.
+        /// </summary>
+        public Guid UserId { get; set; }
+
+        /// <summary>
         /// Transaction type.
         /// </summary>
         public TransactionType TransactionType { get; set; }
