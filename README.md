@@ -14,12 +14,43 @@ Before installing and running the application, please make sure that:
 - **.NET 8** is installed on your computer.
 - **Node.js** is installed on your computer.
 - **SQL Server** is installed on your computed.
+- There's no **TransactionsAppDb** named database.
 - The following ports are **not in use**:
   - **5001** (used by the server)
   - **8080** (used by the client)
 
 ## 🛠️ Installation
-- Clone the project.
+- Clone the project and navigate to the folder.
+- ### **Setting up the Server**
+   - Navigate to the server folder `TransactionsApp.Server`.
+   - Open the `appsettings.json` file in the `TransactionsApp.API` folder.
+   - Update the `ConnectionStrings` section to point to your SQL Server instance. Example:
+   ````
+     "ConnectionStrings": {
+      "DefaultConnection": "Server=localhost;Database=TransactionsAppDb;Trusted_Connection=True;TrustServerCertificate=TrueMultipleActiveResultSets=true"
+      }
+
+   ````
+   - Execute the following command to apply migrations and create the database:
+   ````
+   dotnet ef database update --project .../Infrastructure/TransactionsApp.Infrastructure.Implementations
+   ````
+   - Start the server using the following command:
+   ````
+   dotnet run
+   ````
+   - The server should start at `https://localhost:5001` by default.
+- ### **Setting up the Client**
+   - Navigate to the client Folder `TransactionsApp.Client/transactions-app-client`.
+   - Run the following command to install all required dependencies:
+   ````
+   npm install
+   ````
+   - Start the client using the following command:
+   ````
+   npm run serve
+   ````
+   - The client should be available at `http://localhost:8080` by default.
 
 ## 💸 Using the app
 To start transactioningt, follow these steps:
