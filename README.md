@@ -22,17 +22,17 @@ Before installing and running the application, please make sure that:
 ## 🛠️ Installation
 - Clone the project and navigate to the folder.
 - ### **Setting up the Server**
-   - Navigate to the server folder `TransactionsApp.Server.TransactionsApp.API`.
+   - Navigate to the server folder `TransactionsApp.Server/TransactionsApp.API`.
    - Open the `appsettings.json` file.
    - Update the `ConnectionStrings` section to point to your SQL Server instance. Example:
    ````
      "ConnectionStrings": {
       "DefaultConnection": "Server=localhost;Database=TransactionsAppDb;Trusted_Connection=True;TrustServerCertificate=TrueMultipleActiveResultSets=true"
       }
-
    ````
    - Execute the following command to apply migrations and create the database:
    ````
+   dotnet tool install --global dotnet-ef --version 8.* // If not installed yet
    dotnet ef database update
    ````
    - Start the server using the following command:
