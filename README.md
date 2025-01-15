@@ -22,8 +22,8 @@ Before installing and running the application, please make sure that:
 ## 🛠️ Installation
 - Clone the project and navigate to the folder.
 - ### **Setting up the Server**
-   - Navigate to the server folder `TransactionsApp.Server`.
-   - Open the `appsettings.json` file in the `TransactionsApp.API` folder.
+   - Navigate to the server folder `TransactionsApp.Server.TransactionsApp.API`.
+   - Open the `appsettings.json` file.
    - Update the `ConnectionStrings` section to point to your SQL Server instance. Example:
    ````
      "ConnectionStrings": {
@@ -33,7 +33,7 @@ Before installing and running the application, please make sure that:
    ````
    - Execute the following command to apply migrations and create the database:
    ````
-   dotnet ef database update --project .../Infrastructure/TransactionsApp.Infrastructure.Implementations
+   dotnet ef database update
    ````
    - Start the server using the following command:
    ````
