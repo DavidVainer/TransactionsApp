@@ -54,10 +54,12 @@ namespace TransactionsApp.Infrastructure.Implementations.Repositories
         /// Adds a new record to a data source.
         /// </summary>
         /// <param name="entity">Entity model to add.</param>
-        public async Task AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
+
+            return entity;
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Repositories
         /// Deletes a record from a data source.
         /// </summary>
         /// <param name="id">Record's unique identifier</param>
-        public async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(Guid id)
         {
             var record = await GetByIdAsync(id);
 

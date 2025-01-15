@@ -12,7 +12,7 @@ using TransactionsApp.Infrastructure.Implementations;
 namespace TransactionsApp.Infrastructure.Implementations.Migrations
 {
     [DbContext(typeof(TransactionsAppDbContext))]
-    [Migration("20250115010044_Init")]
+    [Migration("20250115110251_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -43,6 +43,9 @@ namespace TransactionsApp.Infrastructure.Implementations.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

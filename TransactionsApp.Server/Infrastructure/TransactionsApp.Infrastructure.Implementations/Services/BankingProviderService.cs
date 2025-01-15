@@ -94,7 +94,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Services
         private async Task<BankingResponseModel> SimulateRequestAsync<TRequest>(string url, TRequest requestModel)
         {
             // Stimulating a request delay
-            await Task.Delay(500);
+            await Task.Delay(1000);
 
             // Uncomment the following code to make a real request
             // var httpClient = _httpClientFactory.CreateClient();

@@ -32,7 +32,7 @@ namespace TransactionsApp.Application.Services.Repositories
         /// Adds a new record to a data source.
         /// </summary>
         /// <param name="entity">Entity model to add.</param>
-        Task AddAsync(T entity);
+        Task<T> AddAsync(T entity);
 
         /// <summary>
         /// Updates an existing record in a data source.

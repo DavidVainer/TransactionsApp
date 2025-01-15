@@ -43,6 +43,11 @@ namespace TransactionsApp.Domain.Models.Entities
         public TransactionStatus Status { get; set; }
 
         /// <summary>
+        /// Indicates whether the user is deleted.
+        /// </summary>
+        public bool Deleted { get; set; }
+
+        /// <summary>
         /// User entity associated with the transaction.
         /// </summary>
         public User User { get; set; }

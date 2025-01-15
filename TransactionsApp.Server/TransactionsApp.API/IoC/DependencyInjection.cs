@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TransactionsApp.Application.Models.Settings;
+using TransactionsApp.Application.Services.Factories;
+using TransactionsApp.Application.Services.Implementations.Factories;
 using TransactionsApp.Application.Services.Implementations.Managers;
+using TransactionsApp.Application.Services.Implementations.Strategies;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
 using TransactionsApp.Application.Services.Services;
@@ -45,6 +49,30 @@ namespace TransactionsApp.API.IoC
             services.AddScoped<IRepository<Transaction>, TransactionRepository>();
 
             services.AddScoped<IRepository<User>, BaseRepository<User>>();
+
+            services.AddSingleton<IUpdateTransactionDtoValidatorSettings>(new UpdateTransactionDtoValidatorSettings
+            {
+                AmountMinValue = 0,
+                AmountMaxValue = 10000000000,
+                AccountNumberPattern = @"^\d{1,10}$"
+            });
+
+            services.AddSingleton<IAddTransactionDtoValidatorSettings>(new AddTransactionDtoValidatorSettings
+            {
+                FullNameHebrewPattern = @"^[א-ת'\- ]{1,20}$",
+                FullNameEnglishPattern = @"^[A-Za-z'\- ]{1,15}$",
+                DateOfBirthMaximum = DateTime.Now,
+                UserIdentityPattern = @"^\d{9}$",
+                AmountMinValue = 0,
+                AmountMaxValue = 10000000000,
+                AccountNumberPattern = @"^\d{1,10}$"
+            });
+
+            services.AddScoped<DepositStrategy>();
+
+            services.AddScoped<WithdrawStrategy>();
+
+            services.AddScoped<ITransactionStrategyFactory, TransactionStrategyFactory>();
         }
     }
 }

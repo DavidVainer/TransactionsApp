@@ -2,7 +2,6 @@
   <div>
     <h2>{{ isEditMode ? "Edit Transaction" : "New Transaction" }}</h2>
     <b-form @submit.prevent="handleSubmit" class="d-flex flex-column gap-3">
-      <!-- Full Name Hebrew -->
       <b-form-group label="Full Name (Hebrew):" label-for="full-name-hebrew">
         <b-form-input
             id="full-name-hebrew"
@@ -14,11 +13,10 @@
             required
         ></b-form-input>
         <div v-if="(isFormSubmitted || touched.fullNameHebrew) && !isValidFullNameHebrew" class="text-danger">
-          Full Name (Hebrew) must contain only Hebrew letters, apostrophes, dashes, or spaces and be up to 20 characters.
+          {{ getErrorMessage("fullNameHebrew") }}
         </div>
       </b-form-group>
 
-      <!-- Full Name English -->
       <b-form-group label="Full Name (English):" label-for="full-name-english">
         <b-form-input
             id="full-name-english"
@@ -30,11 +28,10 @@
             required
         ></b-form-input>
         <div v-if="(isFormSubmitted || touched.fullNameEnglish) && !isValidFullNameEnglish" class="text-danger">
-          Full Name (English) must contain only English letters, apostrophes, dashes, or spaces and be up to 15 characters.
+          {{ getErrorMessage("fullNameEnglish") }}
         </div>
       </b-form-group>
 
-      <!-- Birth Date -->
       <b-form-group label="Birth of Date:" label-for="birth-of-date">
         <b-form-input
             id="birth-of-date"
@@ -46,11 +43,10 @@
             required
         ></b-form-input>
         <div v-if="(isFormSubmitted || touched.dateOfBirth) && !isValidDateOfBirth" class="text-danger">
-          Please select a valid date.
+          {{ getErrorMessage("dateOfBirth") }}
         </div>
       </b-form-group>
 
-      <!-- User Identity -->
       <b-form-group label="Identity:" label-for="identity">
         <b-form-input
             id="identity"
@@ -62,11 +58,10 @@
             required
         ></b-form-input>
         <div v-if="(isFormSubmitted || touched.userIdentity) && !isValidUserIdentity" class="text-danger">
-          Identity must be exactly 9 digits.
+          {{ getErrorMessage("userIdentity") }}
         </div>
       </b-form-group>
 
-      <!-- Transaction Type -->
       <b-form-group label="Transaction Type:" label-for="transaction-type">
         <b-form-select
             id="transaction-type"
@@ -77,11 +72,10 @@
             required
         ></b-form-select>
         <div v-if="(isFormSubmitted || touched.transactionType) && form.transactionType === null" class="text-danger">
-          Please select a transaction type.
+          {{ getErrorMessage("transactionType") }}
         </div>
       </b-form-group>
 
-      <!-- Amount -->
       <b-form-group label="Amount:" label-for="amount">
         <b-form-input
             id="amount"
@@ -93,11 +87,10 @@
             required
         ></b-form-input>
         <div v-if="(isFormSubmitted || touched.amount) && !isValidAmount" class="text-danger">
-          Amount must be a numeric value up to 10 digits.
+          {{ getErrorMessage("amount") }}
         </div>
       </b-form-group>
 
-      <!-- Account Number -->
       <b-form-group label="Account Number:" label-for="account-number">
         <b-form-input
             id="account-number"
@@ -108,17 +101,18 @@
             required
         ></b-form-input>
         <div v-if="(isFormSubmitted || touched.accountNumber) && !isValidAccountNumber" class="text-danger">
-          Account Number must be a numeric value up to 10 digits.
+          {{ getErrorMessage("accountNumber") }}
         </div>
       </b-form-group>
 
-      <!-- Submit Button -->
-      <b-button type="submit" variant="primary" :disabled="!isFormValid">
-        {{ isEditMode ? "Save Changes" : "Submit" }}
+      <b-button type="submit" variant="primary" :disabled="!isFormValid || isLoading">
+        <span v-if="isLoading">
+          <b-spinner small></b-spinner> Processing...
+        </span>
+        <span v-else>{{ isEditMode ? "Save Changes" : "Submit" }}</span>
       </b-button>
     </b-form>
 
-    <!-- Message Feedback -->
     <div v-if="message" :class="`alert ${isError ? 'alert-danger' : 'alert-success'}`" role="alert" class="mt-3">
       {{ message }}
     </div>
@@ -126,7 +120,36 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import {
+  validateFullNameHebrew,
+  validateFullNameEnglish,
+  validateUserIdentity,
+  validateDateOfBirth,
+  validateAmount,
+  validateAccountNumber } from "@/utils/validators";
+import { transactionTypeLabels } from "@/enums";
+
+const initialForm = {
+  transactionId: "",
+  userIdentity: "",
+  fullNameHebrew: "",
+  fullNameEnglish: "",
+  dateOfBirth: "",
+  transactionType: null,
+  amount: 0,
+  accountNumber: "",
+};
+
+const initialTouched = {
+  fullNameHebrew: false,
+  fullNameEnglish: false,
+  userIdentity: false,
+  dateOfBirth: false,
+  transactionType: false,
+  amount: false,
+  accountNumber: false,
+};
 
 export default {
   created() {
@@ -147,25 +170,18 @@ export default {
   },
   data() {
     return {
-      form: {
-        transactionId: "",
-        userIdentity: "",
-        fullNameHebrew: "",
-        fullNameEnglish: "",
-        dateOfBirth: "",
-        transactionType: null,
-        amount: 0,
-        accountNumber: "",
+      isLoading: false,
+      errorMessages: {
+        fullNameHebrew: "Full Name (Hebrew) must contain only Hebrew letters, apostrophes, dashes, or spaces and be up to 20 characters.",
+        fullNameEnglish: "Full Name (English) must contain only English letters, apostrophes, dashes, or spaces and be up to 15 characters.",
+        userIdentity: "Identity must be exactly 9 digits.",
+        dateOfBirth: "Please select a valid date.",
+        amount: "Amount must be a numeric value up to 10 digits.",
+        accountNumber: "Account Number must be a numeric value up to 10 digits.",
+        transactionType: "Please select a transaction type.",
       },
-      touched: {
-        fullNameHebrew: false,
-        fullNameEnglish: false,
-        userIdentity: false,
-        dateOfBirth: false,
-        transactionType: false,
-        amount: false,
-        accountNumber: false,
-      },
+      form: initialForm,
+      touched: initialTouched,
       transactionTypes: [
         { value: null, text: "Select Transaction Type", disabled: true },
         { value: 1, text: "Deposit" },
@@ -181,24 +197,23 @@ export default {
     isEditMode() {
       return !!this.transactionToEdit;
     },
-    // Custom Validation Rules
     isValidFullNameHebrew() {
-      return /^[א-ת'\-\s]{1,20}$/.test(this.form.fullNameHebrew);
+      return validateFullNameHebrew(this.form.fullNameHebrew);
     },
     isValidFullNameEnglish() {
-      return /^[A-Za-z'\-\s]{1,15}$/.test(this.form.fullNameEnglish);
+      return validateFullNameEnglish(this.form.fullNameEnglish);
     },
     isValidUserIdentity() {
-      return /^\d{9}$/.test(this.form.userIdentity);
+      return validateUserIdentity(this.form.userIdentity);
     },
     isValidDateOfBirth() {
-      return !!this.form.dateOfBirth && !isNaN(Date.parse(this.form.dateOfBirth));
+      return validateDateOfBirth(this.form.dateOfBirth);
     },
     isValidAmount() {
-      return /^\d{1,10}$/.test(this.form.amount.toString());
+      return validateAmount(this.form.amount);
     },
     isValidAccountNumber() {
-      return /^\d{1,10}$/.test(this.form.accountNumber);
+      return validateAccountNumber(this.form.accountNumber);
     },
     isFormValid() {
       return (
@@ -214,59 +229,44 @@ export default {
   },
   methods: {
     ...mapActions(["updateTransaction", "createTransaction"]),
+    getErrorMessage(field) {
+      return this.errorMessages[field];
+    },
     markTouched(field) {
       this.touched[field] = true;
     },
     formatDate(dateString) {
       const date = new Date(dateString);
+      date.setDate(date.getDate() + 1);
       return date.toISOString().split("T")[0];
     },
     async handleSubmit() {
       this.isFormSubmitted = true;
-
-      if (!this.isFormValid) {
-        this.message = "Please fix the errors in the form.";
-        this.isError = true;
-        return;
-      }
+      this.isLoading = true;
 
       try {
         if (this.isEditMode) {
           await this.updateTransaction(this.form);
-          this.message = "Transaction updated successfully!";
+          this.message = `Transaction updated successfully! New amount is transaction with amount of ${this.form.amount}.`;
         } else {
           await this.createTransaction(this.form);
-          this.message = "Transaction created successfully!";
+          this.message = `Transaction updated successfully! User with identity ${this.form.userIdentity}
+            made ${transactionTypeLabels[this.form.transactionType]}
+            transaction with amount of ${this.form.amount}.`;
           this.isError = false;
           this.resetForm();
         }
       } catch (error) {
         this.message = "An error occurred while processing the transaction. Please try again!";
         this.isError = true;
+      } finally {
+        this.isLoading = false;
       }
     },
     resetForm() {
-      this.form = {
-        transactionId: "",
-        userIdentity: "",
-        fullNameHebrew: "",
-        fullNameEnglish: "",
-        dateOfBirth: "",
-        transactionType: null,
-        amount: 0,
-        accountNumber: "",
-      };
-      this.touched = {
-        fullNameHebrew: false,
-        fullNameEnglish: false,
-        userIdentity: false,
-        dateOfBirth: false,
-        transactionType: false,
-        amount: false,
-        accountNumber: false,
-      };
-      this.isFormSubmitted = false;
-    },
+      this.form = initialForm;
+      this.touched = initialTouched;
+    }
   },
 };
 </script>
@@ -278,19 +278,14 @@ export default {
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.5;
   color: var(--bs-body-color);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   background-color: var(--bs-body-bg);
-  background-clip: padding-box;
-  border: var(--bs-border-width) solid var(--bs-border-color);
-  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
 
-#transaction-type:disabled {
-  background-color: #e9ecef;
+  &:disabled {
+    background-color: #e9ecef;
+  }
 }
 </style>
