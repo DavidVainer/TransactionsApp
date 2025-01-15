@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from "../api";
+import {
+  fetchTransactionsAsync,
+  createTransactionAsync,
+  updateTransactionAsync,
+  deleteTransactionAsync } from "@/api";
 
 Vue.use(Vuex)
 
@@ -36,19 +40,19 @@ export default new Vuex.Store({
   },
   actions: {
     async fetchTransactions({ commit }) {
-      const response = await axios.get("/transactions");
-      commit("setTransactions", response.data);
+      const response = await fetchTransactionsAsync();
+      commit("setTransactions", response);
     },
     async createTransaction({ commit }, payload) {
-      const response = await axios.post("/transactions", payload);
-      commit("addTransaction", response.data);
+      const response = await createTransactionAsync(payload);
+      commit("addTransaction", response);
     },
     async updateTransaction({ commit }, payload) {
-      const response = await axios.put(`/transactions/${payload.transactionId}`, payload);
-      commit("updateTransaction", response.data);
+      const response = await updateTransactionAsync(payload);
+      commit("updateTransaction", response);
     },
     async deleteTransaction({ commit }, transactionId) {
-      axios.delete(`/transactions/${transactionId}`);
+      deleteTransactionAsync(transactionId);
       commit("deleteTransaction", transactionId);
     },
   },

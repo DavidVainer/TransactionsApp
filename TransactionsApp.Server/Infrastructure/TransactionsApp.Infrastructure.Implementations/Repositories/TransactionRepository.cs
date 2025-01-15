@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 using TransactionsApp.Domain.Models.Entities;
 
 namespace TransactionsApp.Infrastructure.Implementations.Repositories

@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TransactionsApp.Application.Models.Dto;
 using TransactionsApp.Application.Models.Settings;
 using TransactionsApp.Application.Services.Factories;
 using TransactionsApp.Application.Services.Implementations.Factories;
 using TransactionsApp.Application.Services.Implementations.Managers;
+using TransactionsApp.Application.Services.Implementations.Mappers;
 using TransactionsApp.Application.Services.Implementations.Strategies;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
 using TransactionsApp.Application.Services.Services;
+using TransactionsApp.Common.Services;
 using TransactionsApp.Domain.Models.Entities;
 using TransactionsApp.Infrastructure.Implementations;
 using TransactionsApp.Infrastructure.Implementations.Repositories;
@@ -73,6 +76,12 @@ namespace TransactionsApp.API.IoC
             services.AddScoped<WithdrawStrategy>();
 
             services.AddScoped<ITransactionStrategyFactory, TransactionStrategyFactory>();
+
+            services.AddScoped<IMapper<AddUserDto, User>, UserMapper>();
+
+            services.AddScoped<IMapper<AddTransactionDto, Transaction>, TransactionMapper>();
+
+            services.AddScoped<IMapper<AddTransactionDto, AddUserDto>, AddUserDtoMapper>();
         }
     }
 }

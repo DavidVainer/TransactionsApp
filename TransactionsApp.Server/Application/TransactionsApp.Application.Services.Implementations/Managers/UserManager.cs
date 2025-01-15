@@ -1,6 +1,7 @@
 ﻿using TransactionsApp.Application.Models.Dto;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
+using TransactionsApp.Common.Services;
 using TransactionsApp.Domain.Models.Entities;
 
 namespace TransactionsApp.Application.Services.Implementations.Managers
@@ -11,10 +12,12 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
     public class UserManager : IUserManager
     {
         private readonly IRepository<User> _userRepository;
+        private readonly IMapper<AddUserDto, User> _userMapper;
 
-        public UserManager(IRepository<User> userRepository)
+        public UserManager(IRepository<User> userRepository, IMapper<AddUserDto, User> userMapper)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
         }
 
         /// <summary>
@@ -37,14 +40,7 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         /// <returns>The created user.</returns>
         public async Task<User> CreateUserAsync(AddUserDto dto)
         {
-            var newUser = new User
-            {
-                Id = Guid.NewGuid(),
-                FullNameHebrew = dto.FullNameHebrew,
-                FullNameEnglish = dto.FullNameEnglish,
-                DateOfBirth = dto.DateOfBirth,
-                UserIdentity = dto.UserIdentity
-            };
+            var newUser = _userMapper.Map(dto);
 
             await _userRepository.AddAsync(newUser);
 

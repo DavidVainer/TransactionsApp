@@ -47,7 +47,7 @@
         </div>
       </b-form-group>
 
-      <b-form-group label="Identity:" label-for="identity">
+      <b-form-group label="Identity (Teudat Zehut):" label-for="identity">
         <b-form-input
             id="identity"
             v-model="form.userIdentity"

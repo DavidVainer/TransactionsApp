@@ -25,11 +25,8 @@
     <ProjectReference Include="..\Application\TransactionsApp.Application.Services.Implementations\TransactionsApp.Application.Services.Implementations.csproj" />
     <ProjectReference Include="..\Application\TransactionsApp.Application.Services\TransactionsApp.Application.Services.csproj" />
     <ProjectReference Include="..\Domain\TransactionsApp.Domain.Models\TransactionsApp.Domain.Models.csproj" />
-    <ProjectReference Include="..\Domain\TransactionsApp.Domain.Services.Implementations\TransactionsApp.Domain.Services.Implementations.csproj" />
-    <ProjectReference Include="..\Domain\TransactionsApp.Domain.Services\TransactionsApp.Domain.Services.csproj" />
     <ProjectReference Include="..\Infrastructure\TransactionsApp.Infrastructure.Implementations\TransactionsApp.Infrastructure.Implementations.csproj" />
     <ProjectReference Include="..\Infrastructure\TransactionsApp.Infrastructure.Models\TransactionsApp.Infrastructure.Models.csproj" />
-    <ProjectReference Include="..\Infrastructure\TransactionsApp.Infrastructure.Services\TransactionsApp.Infrastructure.Services.csproj" />
   </ItemGroup>
 
 </Project>

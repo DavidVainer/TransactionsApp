@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       fields: [
-        { key: "user.userIdentity", label: "User Identity" },
+        { key: "user.userIdentity", label: "Identity (Teudat Zehut)" },
         { key: "transactionType", label: "Transaction Type", formatter: (value) => transactionTypeLabels[value] },
         { key: "amount", label: "Amount" },
         { key: "accountNumber", label: "Account Number" },

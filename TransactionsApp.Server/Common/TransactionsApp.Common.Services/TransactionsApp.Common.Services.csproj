@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TransactionsApp.Domain.Models\TransactionsApp.Domain.Models.csproj" />
-  </ItemGroup>
-
 </Project>
