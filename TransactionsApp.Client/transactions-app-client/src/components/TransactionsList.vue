@@ -7,8 +7,8 @@
           <b-button size="sm" variant="secondary" @click="editTransaction(row.item)" title="Edit">
             <BIconPencilFill />
           </b-button>
-          <b-button size="sm" variant="danger" @click="removeTransaction(row.item.id)" title="Delete">
-            <BIconTrashFill />
+          <b-button size="sm" variant="danger" @click="removeTransaction(row.item.id)" title="Cancel">
+            <BIconXCircleFill />
           </b-button>
         </div>
       </template>
@@ -18,27 +18,34 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import { BIconTrashFill, BIconPencilFill } from 'bootstrap-vue'
+import { BIconXCircleFill, BIconPencilFill } from 'bootstrap-vue'
 
 export default {
   components: {
     BIconPencilFill,
-    BIconTrashFill,
+    BIconXCircleFill,
   },
   data() {
     return {
       fields: [
-        { key: "user.fullNameHebrew", label: "Full Name (Hebrew)" },
-        { key: "user.fullNameEnglish", label: "Full Name (English)" },
-        { key: "user.dateOfBirth", label: "Date of Birth", formatter: (value) => new Date(value).toLocaleString() },
-        { key: "user.userId", label: "Identity" },
-        { key: "transactionType", label: "Type" },
+        { key: "user.userIdentity", label: "User Identity" },
+        { key: "transactionType", label: "Transaction Type", formatter: (value) => this.transactionTypeLabels[value] },
         { key: "amount", label: "Amount" },
         { key: "accountNumber", label: "Account Number" },
         { key: "date", label: "Date", formatter: (value) => new Date(value).toLocaleString() },
-        { key: "status", label: "Status" },
+        { key: "status", label: "Status", formatter: (value) => this.statusLabels[value] },
         { key: "actions", label: "Actions" },
       ],
+      transactionTypeLabels: {
+        1: "Deposit",
+        2: "Withdrawal",
+      },
+      statusLabels: {
+        1: "Pending",
+        2: "Completed",
+        3: "Failed",
+        4: "Canceled",
+      }
     };
   },
   created() {

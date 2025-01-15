@@ -11,9 +11,9 @@
         public Guid Id { get; set; }
 
         /// <summary>
-        /// User's unique identifier (e.g., national ID).
+        /// User's unique identity (e.g., Teudat Zehut, National ID).
         /// </summary>
-        public string UserId { get; set; }
+        public string UserIdentity { get; set; }
 
         /// <summary>
         /// Full name of the user in Hebrew.

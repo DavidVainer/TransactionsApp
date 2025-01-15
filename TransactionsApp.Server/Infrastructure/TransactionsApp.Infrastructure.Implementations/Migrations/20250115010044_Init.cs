@@ -16,7 +16,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(9)", unicode: false, maxLength: 9, nullable: false),
+                    UserIdentity = table.Column<string>(type: "varchar(9)", unicode: false, maxLength: 9, nullable: false),
                     FullNameHebrew = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     FullNameEnglish = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false)

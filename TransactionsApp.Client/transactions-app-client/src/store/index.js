@@ -44,7 +44,7 @@ export default new Vuex.Store({
       commit("addTransaction", response.data);
     },
     async updateTransaction({ commit }, payload) {
-      const response = await axios.put(`/transactions/${payload.id}`, payload);
+      const response = await axios.put(`/transactions/${payload.transactionId}`, payload);
       commit("updateTransaction", response.data);
     },
     async deleteTransaction({ commit }, transactionId) {

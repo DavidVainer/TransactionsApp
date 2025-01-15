@@ -1,11 +1,9 @@
-﻿using TransactionsApp.Domain.Models.Enums;
-
-namespace TransactionsApp.Application.Models.Dto
+﻿namespace TransactionsApp.Application.Models.Dto
 {
     /// <summary>
-    /// Data transfer object for adding a new transaction.
+    /// Data transfer object for adding a new user.
     /// </summary>
-    public class AddTransactionDto
+    public class AddUserDto
     {
         /// <summary>
         /// Full name of the user in Hebrew.
@@ -26,20 +24,5 @@ namespace TransactionsApp.Application.Models.Dto
         /// User's unique identity (e.g., Teudat Zehut, National ID).
         /// </summary>
         public string UserIdentity { get; set; }
-
-        /// <summary>
-        /// Transaction type.
-        /// </summary>
-        public TransactionType TransactionType { get; set; }
-
-        /// <summary>
-        /// Amount of money used in the transaction.
-        /// </summary>
-        public decimal Amount { get; set; }
-
-        /// <summary>
-        /// Bank account number associated with the transaction.
-        /// </summary>
-        public string AccountNumber { get; set; }
     }
 }

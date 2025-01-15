@@ -76,7 +76,7 @@ namespace TransactionsApp.Infrastructure.Implementations.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserIdentity")
                         .IsRequired()
                         .HasMaxLength(9)
                         .IsUnicode(false)

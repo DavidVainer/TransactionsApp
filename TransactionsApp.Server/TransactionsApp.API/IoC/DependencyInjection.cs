@@ -17,6 +17,7 @@ namespace TransactionsApp.API.IoC
     public static class DependencyInjection
     {
         private const string DEFAULT_CONNECTION_STRING_KEY = "DefaultConnection";
+        private const string BANKING_PROVIDER_SETTINGS_KEY = "BankingProviderSettings";
 
         /// <summary>
         /// Configures services and dependencies for the application in the IoC container.
@@ -26,23 +27,20 @@ namespace TransactionsApp.API.IoC
         public static void ConfigureDI(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString(DEFAULT_CONNECTION_STRING_KEY);
+            var bankingProviderSettings = configuration.GetSection(BANKING_PROVIDER_SETTINGS_KEY).Get<BankingProviderSettings>();
 
-            services.AddHttpClient("OpenBankingClient");
+            services.AddHttpClient();
 
             services.AddDbContext<TransactionsAppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
             services.AddScoped<ITransactionManager, TransactionManager>();
 
-            services.AddScoped<IBankingProviderService, OpenBankingProviderService>();
+            services.AddScoped<IUserManager, UserManager>();
 
-            services.AddSingleton<IBankingProviderSettings>(new BankingProviderSettings
-            {
-                CreateTokenUrl = "https://openBanking/createtoken",
-                CreateTokenSecretId = "Je45GDf34",
-                DepositUrl = "https://openBanking/createdeposit",
-                WithdrawUrl = "https://openBanking/createWithdrawal",
-            });
+            services.AddScoped<IBankingProviderService, BankingProviderService>();
+
+            services.AddSingleton<IBankingProviderSettings>(bankingProviderSettings);
 
             services.AddScoped<IRepository<Transaction>, TransactionRepository>();
 

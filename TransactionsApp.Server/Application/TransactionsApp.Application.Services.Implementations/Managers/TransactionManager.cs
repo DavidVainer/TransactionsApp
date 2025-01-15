@@ -1,5 +1,4 @@
-﻿using TransactionsApp.Application.Models.BankingProvider.Requests;
-using TransactionsApp.Application.Models.BankingProvider.Responses;
+﻿using TransactionsApp.Application.Models.BankingProvider.Responses;
 using TransactionsApp.Application.Models.Dto;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
@@ -15,16 +14,16 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
     public class TransactionManager : ITransactionManager
     {
         private readonly IRepository<Transaction> _transactionRepository;
-        private readonly IRepository<User> _userRepository;
+        private readonly IUserManager _userManager;
         private readonly IBankingProviderService _bankingProviderService;
 
         public TransactionManager(
             IRepository<Transaction> transactionRepository,
-            IRepository<User> userRepository,
+            IUserManager userManager,
             IBankingProviderService bankingProviderService)
         {
             _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _bankingProviderService = bankingProviderService ?? throw new ArgumentNullException(nameof(bankingProviderService));
         }
 
@@ -62,16 +61,9 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
                 throw new Exception("Failed to generate token.");
             }
 
-            TransactionResponseModel responseModel;
-
-            if (dto.TransactionType == TransactionType.Deposit)
-            {
-                responseModel = await _bankingProviderService.DepositAsync(dto);
-            }
-            else
-            {
-                responseModel = await _bankingProviderService.WithdrawAsync(dto);
-            }
+            var responseModel = dto.TransactionType == TransactionType.Deposit ?
+                await _bankingProviderService.DepositAsync(dto) :
+                await _bankingProviderService.WithdrawAsync(dto);
 
             if (responseModel.Code != "Success")
             {
@@ -85,7 +77,7 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
                 UserId = userId,
                 TransactionType = dto.TransactionType,
                 Amount = dto.Amount,
-                Date = DateTime.UtcNow,
+                Date = DateTime.Now,
                 AccountNumber = dto.AccountNumber,
                 Status = TransactionStatus.Pending,
             };
@@ -121,13 +113,24 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
             await _transactionRepository.DeleteAsync(id);
         }
 
+        /// <summary>
+        /// Gets the unique identifier of a user who made the transaction.
+        /// </summary>
+        /// <param name="dto">Data transfer object.</param>
+        /// <returns>Unique identifier of a user who made the transaction.</returns>
         private async Task<Guid> GetUserId(AddTransactionDto dto)
         {
-            User existingUser = _userRepository.FindAsync(x => x.UserId == dto.UserId).Result.FirstOrDefault();
+            var existingUser = await _userManager.GetUserByIdentity(dto.UserIdentity);
 
             if (existingUser == null)
             {
-                var newUser = await CreateUser(dto);
+                var newUser = await _userManager.CreateUserAsync(new AddUserDto
+                {
+                    FullNameHebrew = dto.FullNameHebrew,
+                    FullNameEnglish = dto.FullNameEnglish,
+                    DateOfBirth = dto.DateOfBirth,
+                    UserIdentity = dto.UserIdentity
+                });
 
                 return newUser.Id;
             }
@@ -135,22 +138,7 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
             {
                 return existingUser.Id;
             }
-        }
 
-        private async Task<User> CreateUser(AddTransactionDto dto)
-        {
-            var newUser = new User
-            {
-                Id = Guid.NewGuid(),
-                UserId = dto.UserId,
-                FullNameHebrew = dto.FullNameHebrew,
-                FullNameEnglish = dto.FullNameEnglish,
-                DateOfBirth = dto.DateOfBirth
-            };
-
-            await _userRepository.AddAsync(newUser);
-
-            return newUser;
         }
     }
 }
