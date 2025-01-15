@@ -16,7 +16,7 @@ Before installing and running the application, please make sure that:
 - **SQL Server** is installed on your computed.
 - There's no **TransactionsAppDb** named database.
 - The following ports are **not in use**:
-  - **5001** (used by the server)
+  - **5000** (used by the server)
   - **8080** (used by the client)
 - **Visual Studio** is installed on your computed.
 
