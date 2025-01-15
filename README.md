@@ -18,28 +18,29 @@ Before installing and running the application, please make sure that:
 - The following ports are **not in use**:
   - **5001** (used by the server)
   - **8080** (used by the client)
+- **Visual Studio** is installed on your computed.
 
 ## 🛠️ Installation
 - Clone the project and navigate to the folder.
 - ### **Setting up the Server**
-   - Navigate to the server folder `TransactionsApp.Server/TransactionsApp.API`.
-   - Open the `appsettings.json` file.
+   - Open the server solution in `TransactionsApp.Server` in Visual Studio.
+   - Open the `appsettings.json` file in `TransactionsApp.API` folder.
    - Update the `ConnectionStrings` section to point to your SQL Server instance. Example:
    ````
      "ConnectionStrings": {
       "DefaultConnection": "Server=localhost;Database=TransactionsAppDb;Trusted_Connection=True;TrustServerCertificate=TrueMultipleActiveResultSets=true"
       }
    ````
+   - Open **Package Manager Console** and select `TransactionsApp.Infrastructure.Implementations` as default project.
    - Execute the following command to apply migrations and create the database:
    ````
-   dotnet tool install --global dotnet-ef --version 8.* // If not installed yet
-   dotnet ef database update
+   Update-Database
    ````
-   - Start the server using the following command:
-   ````
-   dotnet run
-   ````
-   - The server should start at `https://localhost:5001` by default.
+   - In Visual Studio set `TransactionsApp.API` as the startup project.
+   - Choose `http` as start type.
+   - Run the application using **F5**.
+ 
+   - The server should start at `http://localhost:5000` by default.
 - ### **Setting up the Client**
    - Navigate to the client Folder `TransactionsApp.Client/transactions-app-client`.
    - Run the following command to install all required dependencies:
