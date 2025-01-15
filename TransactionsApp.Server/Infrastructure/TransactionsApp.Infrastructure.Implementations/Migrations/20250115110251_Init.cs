@@ -36,7 +36,8 @@ namespace TransactionsApp.Infrastructure.Implementations.Migrations
                     Amount = table.Column<decimal>(type: "decimal(10,0)", precision: 10, scale: 0, nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AccountNumber = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

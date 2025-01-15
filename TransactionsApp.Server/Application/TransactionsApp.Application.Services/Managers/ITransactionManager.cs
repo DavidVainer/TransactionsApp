@@ -25,7 +25,7 @@ namespace TransactionsApp.Application.Services.Managers
         /// Creates a new transaction.
         /// </summary>
         /// <param name="dto">Data transfer object with data of a transaction to create.</param>
-        Task CreateTransactionAsync(AddTransactionDto dto);
+        Task ProcessTransactionAsync(AddTransactionDto dto);
 
         /// <summary>
         /// Updates an existing transaction.

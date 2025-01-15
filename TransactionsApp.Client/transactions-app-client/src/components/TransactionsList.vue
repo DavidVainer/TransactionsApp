@@ -1,24 +1,43 @@
 <template>
   <div>
     <h2>Transactions List</h2>
-    <b-table :items="transactions" :fields="fields">
-      <template #cell(actions)="row">
-        <div class="d-flex gap-1">
-          <b-button size="sm" variant="secondary" @click="editTransaction(row.item)" title="Edit">
-            <BIconPencilFill />
-          </b-button>
-          <b-button size="sm" variant="danger" @click="removeTransaction(row.item.id)" title="Cancel">
-            <BIconXCircleFill />
-          </b-button>
-        </div>
-      </template>
-    </b-table>
+    <div class="table-wrapper">
+      <div v-if="isLoading" class="loader-wrapper">
+        <b-spinner variant="primary" style="width: 5rem; height: 5rem"></b-spinner>
+      </div>
+      <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+      <b-table v-else :items="transactions" :fields="fields">
+        <template #cell(actions)="row">
+          <div class="d-flex gap-1 justify-content-center">
+            <b-button
+                size="sm"
+                variant="secondary"
+                @click="editTransaction(row.item)"
+                title="Edit"
+            >
+              <BIconPencilFill />
+            </b-button>
+            <b-button
+                size="sm"
+                variant="danger"
+                @click="removeTransaction(row.item.id)"
+                title="Cancel"
+            >
+              <BIconXCircleFill />
+            </b-button>
+          </div>
+        </template>
+      </b-table>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import { BIconXCircleFill, BIconPencilFill } from 'bootstrap-vue'
+import { BIconXCircleFill, BIconPencilFill } from "bootstrap-vue";
+import { transactionTypeLabels, statusLabels } from "@/enums";
 
 export default {
   components: {
@@ -29,27 +48,19 @@ export default {
     return {
       fields: [
         { key: "user.userIdentity", label: "User Identity" },
-        { key: "transactionType", label: "Transaction Type", formatter: (value) => this.transactionTypeLabels[value] },
+        { key: "transactionType", label: "Transaction Type", formatter: (value) => transactionTypeLabels[value] },
         { key: "amount", label: "Amount" },
         { key: "accountNumber", label: "Account Number" },
         { key: "date", label: "Date", formatter: (value) => new Date(value).toLocaleString() },
-        { key: "status", label: "Status", formatter: (value) => this.statusLabels[value] },
-        { key: "actions", label: "Actions" },
+        { key: "status", label: "Status", formatter: (value) => statusLabels[value] },
+        { key: "actions", label: "Actions", class: "text-center" },
       ],
-      transactionTypeLabels: {
-        1: "Deposit",
-        2: "Withdrawal",
-      },
-      statusLabels: {
-        1: "Pending",
-        2: "Completed",
-        3: "Failed",
-        4: "Canceled",
-      }
+      isLoading: true,
+      errorMessage:"",
     };
   },
   created() {
-    this.fetchTransactions();
+    this.fetchTransactionsList();
   },
   computed: {
     ...mapGetters(["transactions"]),
@@ -57,15 +68,40 @@ export default {
   methods: {
     ...mapActions(["fetchTransactions", "deleteTransaction"]),
     ...mapMutations(["setTransactionToEdit"]),
+    async fetchTransactionsList() {
+      try {
+        this.isLoading = true;
+        await this.fetchTransactions();
+      } catch (error) {
+        this.errorMessage = `Error fetching transactions list: ${error}`;
+      } finally {
+        this.isLoading = false;
+      }
+    },
     editTransaction(transaction) {
       this.setTransactionToEdit(transaction);
       this.$router.push("/new");
     },
     removeTransaction(transactionId) {
-      if (confirm("Are you sure you want to delete this transaction?")) {
+      if (confirm("Are you sure you want to permanently cancel this transaction?")) {
         this.deleteTransaction(transactionId);
       }
     },
   },
 };
 </script>
+
+<style scoped>
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+</style>

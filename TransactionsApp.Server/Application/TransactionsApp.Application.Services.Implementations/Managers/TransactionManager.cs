@@ -1,5 +1,5 @@
-﻿using TransactionsApp.Application.Models.BankingProvider.Responses;
-using TransactionsApp.Application.Models.Dto;
+﻿using TransactionsApp.Application.Models.Dto;
+using TransactionsApp.Application.Services.Factories;
 using TransactionsApp.Application.Services.Managers;
 using TransactionsApp.Application.Services.Repositories;
 using TransactionsApp.Application.Services.Services;
@@ -16,15 +16,18 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         private readonly IRepository<Transaction> _transactionRepository;
         private readonly IUserManager _userManager;
         private readonly IBankingProviderService _bankingProviderService;
+        private readonly ITransactionStrategyFactory _transactionStrategyFactory;
 
         public TransactionManager(
             IRepository<Transaction> transactionRepository,
             IUserManager userManager,
-            IBankingProviderService bankingProviderService)
+            IBankingProviderService bankingProviderService,
+            ITransactionStrategyFactory transactionStrategyFactory)
         {
             _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _bankingProviderService = bankingProviderService ?? throw new ArgumentNullException(nameof(bankingProviderService));
+            _transactionStrategyFactory = transactionStrategyFactory ?? throw new ArgumentNullException(nameof(transactionStrategyFactory));
         }
 
         /// <summary>
@@ -49,40 +52,29 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         }
 
         /// <summary>
-        /// Creates a new transaction.
+        /// Processes a new transaction.
         /// </summary>
-        /// <param name="dto">Data transfer object with data of a transaction to create.</param>
-        public async Task CreateTransactionAsync(AddTransactionDto dto)
+        /// <param name="dto">Data transfer object with data of a transaction to process.</param>
+        public async Task ProcessTransactionAsync(AddTransactionDto dto)
         {
-            var tokenResponse = await _bankingProviderService.GenerateTokenAsync(dto);
-
-            if (tokenResponse.Code != "Success")
-            {
-                throw new Exception("Failed to generate token.");
-            }
-
-            var responseModel = dto.TransactionType == TransactionType.Deposit ?
-                await _bankingProviderService.DepositAsync(dto) :
-                await _bankingProviderService.WithdrawAsync(dto);
-
-            if (responseModel.Code != "Success")
-            {
-                throw new Exception("Failed to process transaction.");
-            }
-
             var userId = await GetUserId(dto);
+            var transaction = await InitializeTransactionAsync(dto, userId);
 
-            var newTransaction = new Transaction
+            try
             {
-                UserId = userId,
-                TransactionType = dto.TransactionType,
-                Amount = dto.Amount,
-                Date = DateTime.Now,
-                AccountNumber = dto.AccountNumber,
-                Status = TransactionStatus.Pending,
-            };
+                await ValidateTransactionAsync(dto);
+                await ExecuteTransactionAsync(dto);
 
-            await _transactionRepository.AddAsync(newTransaction);
+                transaction.Status = TransactionStatus.Completed;
+            }
+            catch (Exception ex)
+            {
+                transaction.Status = TransactionStatus.Failed;
+            }
+            finally
+            {
+                await _transactionRepository.UpdateAsync(transaction);
+            }
         }
 
         /// <summary>
@@ -111,6 +103,58 @@ namespace TransactionsApp.Application.Services.Implementations.Managers
         public async Task DeleteTransactionAsync(Guid id)
         {
             await _transactionRepository.DeleteAsync(id);
+        }
+
+        /// <summary>
+        /// Initializes a new transaction and saves it to the database.
+        /// </summary>
+        /// <param name="dto">Data transfer object.</param>
+        /// <param name="userId">User unique identifier.</param>
+        /// <returns>Created transaction.</returns>
+        private async Task<Transaction> InitializeTransactionAsync(AddTransactionDto dto, Guid userId)
+        {
+            var transaction = new Transaction
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                TransactionType = dto.TransactionType,
+                Amount = dto.Amount,
+                Date = DateTime.Now,
+                AccountNumber = dto.AccountNumber,
+                Status = TransactionStatus.Pending,
+                Deleted = false,
+            };
+
+            return await _transactionRepository.AddAsync(transaction);
+        }
+
+        /// <summary>
+        /// Validates the transaction by generating a token.
+        /// <param name="dto">Data transfer object.</param>
+        /// </summary>
+        private async Task ValidateTransactionAsync(AddTransactionDto dto)
+        {
+            var tokenResponse = await _bankingProviderService.GenerateTokenAsync(dto);
+
+            if (tokenResponse.Code != "Success")
+            {
+                throw new Exception("Failed to generate token.");
+            }
+        }
+
+        /// <summary>
+        /// Executes the transaction.
+        /// </summary>
+        /// <param name="dto">Data transfer object.</param>
+        private async Task ExecuteTransactionAsync(AddTransactionDto dto)
+        {
+            var transactionStrategy = _transactionStrategyFactory.GetStrategy(dto.TransactionType);
+            var responseModel = await transactionStrategy.ProcessTransactionAsync(dto);
+
+            if (responseModel.Code != "Success")
+            {
+                throw new Exception("Failed to process transaction.");
+            }
         }
 
         /// <summary>

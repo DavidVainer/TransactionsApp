@@ -45,13 +45,13 @@ namespace TransactionsApp.API.Controllers
         }
 
         /// <summary>
-        /// Creates a new transaction.
+        /// Process a new transaction.
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]AddTransactionDto dto)
+        public async Task<IActionResult> Process([FromBody]AddTransactionDto dto)
         {
-            await _manager.CreateTransactionAsync(dto);
+            await _manager.ProcessTransactionAsync(dto);
             return Ok();
         }
 
